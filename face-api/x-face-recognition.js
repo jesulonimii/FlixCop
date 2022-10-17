@@ -19,8 +19,7 @@ const fetchRefFaces = async (url) => {
 
 
     const xlabels = [
-        'Jon Snow',
-        'Emilia Clarke'
+        'Samuel L Jackson'
     ]
 
     const labels = []
@@ -37,7 +36,7 @@ const fetchRefFaces = async (url) => {
     }
 
     return Promise.all(
-        labels.map(async label => {
+        xlabels.map(async label => {
             let imgUrl = `${url}/${label}.jpg`
             let img;
 
