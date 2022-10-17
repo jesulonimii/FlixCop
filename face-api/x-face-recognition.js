@@ -17,11 +17,12 @@ const loadModels = async () => {
 //function to load reference images
 const fetchRefFaces = async (url) => {
 
-
+    //populate with list of new added faces
     const xlabels = [
         'Samuel L Jackson'
     ]
 
+    //list of all reference images data
     const labels = []
 
     //create label list from reference images available
@@ -35,6 +36,7 @@ const fetchRefFaces = async (url) => {
         console.error(err);
     }
 
+    //change xlabels to labels to rebuild all reference images data
     return Promise.all(
         xlabels.map(async label => {
             let imgUrl = `${url}/${label}.jpg`
