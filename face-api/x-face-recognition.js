@@ -19,7 +19,8 @@ const fetchRefFaces = async (url) => {
 
 
     const xlabels = [
-
+        'Jon Snow',
+        'Emilia Clarke'
     ]
 
     const labels = []
@@ -36,7 +37,7 @@ const fetchRefFaces = async (url) => {
     }
 
     return Promise.all(
-        xlabels.map(async label => {
+        labels.map(async label => {
             let imgUrl = `${url}/${label}.jpg`
             let img;
 
@@ -68,16 +69,25 @@ const fetchRefFaces = async (url) => {
 
 let labeledFaceDescriptors = null
 loadModels().then(async () => {
-    console.log('\n=========Starting===========\nModels loaded\n')
-    labeledFaceDescriptors = await fetchRefFaces(HOST_URL).then((data)=>{
-        console.log('All reference images analysed\n')
+    console.log("\x1b[31m",'\n=========Starting===========\n',"\x1b[33m")
+    console.log('Models loaded')
 
-        fs.stat(`${__dirname}/reference-db/face-descriptors.json`).then((stats) => {
+    //checking if reference database file exists, analyzing and creating if not, reading existing if it does
+    fs.stat(`${__dirname}/reference-db/face-descriptors.json`).then((stats) => {
 
-        }).catch((err) => {
-            console.log('Reference database file not found...Creating new...')
-            saveDescriptors(data).then((ok)=>{
-                if (!ok){
+        readDescriptorsFile()
+
+    }).catch(async (err) => {
+
+        console.log('Reference database file not found...Creating new...')
+        await fetchRefFaces(HOST_URL).then((data) => {
+            console.log('All reference images analysed\n')
+
+            //convert to json
+            const descriptors = data.map(x=>x.toJSON())
+
+            saveDescriptors(JSON.stringify(descriptors)).then((ok) => {
+                if (!ok) {
                     console.log('Error saving reference database file')
                     return Error('Error saving reference database file')
                 }
@@ -115,7 +125,7 @@ faceDetect = async (image) => {
 //other functions
 async function saveDescriptors(data) {
     try {
-        await fs.writeFile(`${__dirname}/reference-db/face-descriptors.json`, JSON.stringify(data), 'utf8',{ flag: "wx" }, (err) => {
+        await fs.writeFile(`${__dirname}/reference-db/face-descriptors.json`, data, 'utf8',{ flag: "wx" }, (err) => {
             if (err) {
                 console.log(err)
             }
@@ -130,20 +140,34 @@ async function saveDescriptors(data) {
 
 }
 
-//other functions
 async function readDescriptorsFile() {
     try {
 
         console.log('Reading reference database file')
+        fs.readFile(`${__dirname}/reference-db/face-descriptors.json`, 'utf8').then((data) => {
+
+
+            console.log('Reference database file loaded')
+            //convert to faceapi readable file
+            labeledFaceDescriptors = JSON.parse(data).map( x=>faceapi.LabeledFaceDescriptors.fromJSON(x) );
+            //done
+            console.log("\x1b[32m",'\n=========Ready===========\n\n',"\x1b[0m")
+
+        }).catch((err) => {
+            console.log(`Error reading file: ${err}`)
+        })
 
     } catch (err) {
-        console.log(`Error reading file: ${err}`)
+        console.log(`Error trying to read file: ${err}`)
         return false
     }
     return false
 
 }
 
+
+
+//export
 module.exports = {
     faceMatch,
     faceDetect

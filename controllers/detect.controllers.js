@@ -6,6 +6,7 @@ exports.detectFromImage = async (req, res) => {
 
     const {image} = req.files;
 
+    console.log("\n====START DETECTING======\n");
     console.log("Detecting possible Faces...")
     const detections = await faceDetect(image)
     console.log(`Found ${detections.length} face(s)`)
@@ -25,4 +26,6 @@ exports.detectFromImage = async (req, res) => {
     //output result
     console.log("\x1b[32m", `\nResult: ${possible_faces}\n`, "\x1b[0m")
     res.send(JSON.stringify(possible_faces));
+    console.log("\n=====FINISHED======\n");
+
 }
