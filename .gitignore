@@ -3,3 +3,4 @@ package-lock.json
 .idea
 console-log-color-ref.txt
 .gitignore
+*.env
