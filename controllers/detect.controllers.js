@@ -2,7 +2,7 @@ const  {faceDetect, faceMatch} = require(`${__dirname}/../face-api/x-face-recogn
 
 
 
-exports.detectFromImage = async (req, res) => {
+exports.detectFromImage = async (req, res, next) => {
 
     const {image} = req.files;
 
@@ -25,7 +25,9 @@ exports.detectFromImage = async (req, res) => {
 
     //output result
     console.log("\x1b[32m", `\nResult: ${possible_faces}\n`, "\x1b[0m")
-    res.send(JSON.stringify(possible_faces));
+    //res.send(JSON.stringify(possible_faces));
     console.log("\n=====FINISHED======\n");
+    req.actors = possible_faces;
+    next()
 
 }

@@ -13,7 +13,11 @@ app.use(express.static('public'));
 
 
 
-app.use('/v1/', v1Router);
+app.use('/api/v1/', v1Router);
+
+app.get('/', (req, res) => {
+  res.end("FlixCop api is running");
+})
 
 
 
