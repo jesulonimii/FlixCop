@@ -5,7 +5,7 @@ const {getMovieByActors} = require("../controllers/movie.controllers");
 
 
 router.post('/detect/image', detectFromImage, (req, res) => {
-    res.json(req.actors)
+    res.send(req.actors)
 })
 
 router.post('/find', detectFromImage, getMovieByActors);
