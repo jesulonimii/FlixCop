@@ -46,7 +46,8 @@ exports.getMovieByActors = async (req, res, next) => {
             return x["category"].toLowerCase() === "TVEPISODES".toLowerCase()
         })
 
-        res.send(`The movies are: ${JSON.stringify(movies_result)}\n\n\nThe tv shows are: ${JSON.stringify(tv_shows_result)}`)
+        //console.log(`The movies are: ${JSON.stringify(movies_result)}\n\n\nThe tv shows are: ${JSON.stringify(tv_shows_result)}`)
+        res.send({movies_result, tv_shows_result})
 
     }).catch((err) => {
         console.log(err)
