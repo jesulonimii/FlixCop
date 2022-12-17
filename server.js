@@ -25,6 +25,10 @@ app.get('/', (req, res) => {
   res.end("FlixCop api is running");
 })
 
+app.get('/status', (req, res) => {
+    res.status(200).send("FlixCop api is running");
+})
+
 
 bot_setup().then(r => console.log("FlixCop Telegram Bot is running"));
 
