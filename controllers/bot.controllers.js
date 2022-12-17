@@ -17,7 +17,7 @@ const config = {
 exports.bot_setup = async () => {
 
     const welcome_msg =`
-    Welcome to FlixCop Bot!\n simple bot that allows you find movies from pictures containing the actors/actresses.
+    Welcome to FlixCop Bot!\nA simple bot that allows you find movies from pictures containing the actors/actresses.
     `
 
     bot.command('start', (ctx) => {
