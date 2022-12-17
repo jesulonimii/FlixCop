@@ -11,7 +11,7 @@ const botRouter = require(`./routes/bot.routes.js`);
 const {bot_setup} = require('./controllers/bot.controllers.js');
 
 
-
+app.use(express.json());
 app.use(fileUpload());
 app.use(express.static('public'));
 

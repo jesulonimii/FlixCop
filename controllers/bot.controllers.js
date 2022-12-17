@@ -1,15 +1,23 @@
 const { Telegraf } = require('telegraf');
+const axios = require("axios");
+const {response} = require("express");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
+const { API_URL, FLIXCOP_API_KEY } = process.env
 
+const config = {
+    headers: {
+        ["Content-Type"]: "application/json",
+        ["x-api-key"]: FLIXCOP_API_KEY
+    }
+}
 
 
 exports.bot_setup = async () => {
 
     const welcome_msg =`
-    Welcome to FlixCop Bot!
-    A simple bot that allows you find movies from pictures containing the actors/actresses.
+    Welcome to FlixCop Bot!\n simple bot that allows you find movies from pictures containing the actors/actresses.
     `
 
     bot.command('start', (ctx) => {
@@ -17,15 +25,38 @@ exports.bot_setup = async () => {
     });
 
 
+    bot.on('text', async (ctx) => {
+        ctx.reply('Please send a picture containing the actors/actresses you want to find movies for.')
+    })
 
 
-    bot.on('message', (ctx) => {
+    bot.on('message', async (ctx) => {
         //console.log(ctx.update.message)
 
-        if (ctx.update.message.photo){
-            onImageReceive(ctx.update.message.photo[ctx.update.message.photo.length - 1], ctx)
-        }
+        if (ctx.update.message.photo) {
+            ctx.reply('Processing Image... Please wait.')
+            const imageDetails = await onImageReceive(ctx.update.message.photo[ctx.update.message.photo.length - 1], ctx)
 
+            const data = {
+                image: imageDetails.url
+            }
+
+
+            await axios.post(`${API_URL}/api/v1/find-via-url`, data, config).then(({data}) => {
+                console.log(data)
+
+                const result = `Title: ${data.name}\nYear: ${data.year}\nRating: ${data.rating}\nhttps://www.imdb.com/title/${data.id}/`
+
+                ctx.reply(result)
+
+                
+                
+            }).catch((e) => {
+                const error = `{"error" : "${e.message}", "reason" : "${e.response.data}" }`
+                console.log(error)
+                ctx.reply(`We could not finish your request: ${e.response.data}`)
+            })
+        }
 
     })
 
@@ -34,7 +65,7 @@ exports.bot_setup = async () => {
         const fileObject =  await ctx.telegram.getFileLink(photo.file_id);
         const fileUrl = JSON.stringify(fileObject).replace(/"/g, '');
 
-        return {fileUrl, caption: ctx.update.message.caption};
+        return {url: fileUrl, caption: ctx.update.message.caption};
     }
 
 
@@ -47,9 +78,6 @@ exports.setCommands = async (req, res) => {
     try {
         await bot.telegram.setMyCommands([
             {command: 'start', description: 'Start bot'},
-            {command: 'help', description: 'Help'},
-            {command: 'settings', description: 'Settings'},
-            {command: 'about', description: 'About'},
         ]);
         res.end('ok');
     } catch (e) {

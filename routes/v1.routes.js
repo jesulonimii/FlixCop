@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const {detectFromImage} = require("../controllers/detect.controllers");
+const {detectFromImage, detectFromUrl} = require("../controllers/detect.controllers");
 const {getMovieByActors} = require("../controllers/movie.controllers");
 const {verify} = require("../middlewares/verifyApiKey.middlewares");
 const gpt3 = require("../middlewares/gpt-3.middlewares");
@@ -10,7 +10,9 @@ router.post('/detect/image', verify, detectFromImage, (req, res) => {
     res.send(req.actors)
 })
 
-router.post('/find', verify, detectFromImage, getMovieByActors);
+router.post('/find-via-file', verify, detectFromImage, getMovieByActors);
+router.post('/find-via-url', verify, detectFromUrl, getMovieByActors);
+
 
 router.post('/prompt', verify, async (req, res) => {
     const prompt = req.body.prompt

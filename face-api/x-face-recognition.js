@@ -115,8 +115,9 @@ faceMatch = (descriptor) => {
     return result
 }
 
-faceDetect = async (image) => {
-    const img = await loadImage(image.data);
+faceDetect = async (image, res) => {
+    const img = await loadImage(image);
+
     const detections = await faceapi.detectAllFaces(img).withFaceLandmarks().withFaceDescriptors();
 
     return detections;
