@@ -4,3 +4,4 @@ package-lock.json
 console-log-color-ref.txt
 .gitignore
 *.env
+.junk
