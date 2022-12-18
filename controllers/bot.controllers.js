@@ -86,6 +86,3 @@ exports.setCommands = async (req, res) => {
     }
 }
 
-exports.setName = async () => {
-
-}
